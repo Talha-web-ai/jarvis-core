@@ -15,7 +15,7 @@ def main():
     agent = JarvisAgent(goal)
     results = agent.run()
 
-    console.print("\n[bold yellow]Final Output:[/bold yellow]")
+    console.print("\n[bold yellow]Final Approved Output:[/bold yellow]")
     for r in results:
         console.print(f"- {r}")
 

@@ -1,7 +1,10 @@
 # core/agent.py
 
 from core.planner import plan
-from core.executor import execute
+from core.executor import ExecutorAgent
+from core.reviewer import ReviewerAgent
+from memory.short_term import ShortTermMemory
+from memory.long_term import LongTermMemory
 from rich.console import Console
 
 console = Console()
@@ -9,20 +12,30 @@ console = Console()
 class JarvisAgent:
     def __init__(self, goal: str):
         self.goal = goal
-        self.steps = []
+        self.planner_steps = []
+        self.executor = ExecutorAgent()
+        self.reviewer = ReviewerAgent()
+        self.short_memory = ShortTermMemory()
+        self.long_memory = LongTermMemory()
 
     def think(self):
-        console.print("[bold green]JARVIS thinking...[/bold green]")
-        self.steps = plan(self.goal)
+        console.print("[bold green]JARVIS planning...[/bold green]")
+        self.planner_steps = plan(self.goal)
 
     def act(self):
-        results = []
-        for step in self.steps:
-            result = execute(step)
-            results.append(result)
-        return results
+        final_results = []
+
+        for step in self.planner_steps:
+            result = self.executor.execute(step)
+
+            approved = self.reviewer.review(result)
+            if approved:
+                self.short_memory.add(result)
+                self.long_memory.add(result)
+                final_results.append(result)
+
+        return final_results
 
     def run(self):
         self.think()
-        results = self.act()
-        return results
+        return self.act()
