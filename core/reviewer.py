@@ -1,17 +1,17 @@
 # core/reviewer.py
-
+from core.llm import llm_complete
 from rich.console import Console
 
 console = Console()
 
+SYSTEM_PROMPT = """
+You are a strict reviewer AI.
+Approve results only if they are useful, correct, and clear.
+Respond with APPROVE or REJECT and a short reason.
+"""
+
 class ReviewerAgent:
     def review(self, result: str) -> bool:
-        console.print(f"[bold magenta]→ Reviewer evaluating result[/bold magenta]")
-
-        # Simple quality check (will become LLM-based later)
-        if len(result) < 10:
-            console.print("[red]✗ Result rejected[/red]")
-            return False
-
-        console.print("[green]✓ Result approved[/green]")
-        return True
+        feedback = llm_complete(SYSTEM_PROMPT, result)
+        console.print(f"[bold magenta]→ Reviewer:[/bold magenta] {feedback}")
+        return feedback.upper().startswith("APPROVE")

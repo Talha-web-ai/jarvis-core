@@ -1,15 +1,17 @@
-# core/planner.py
+from core.llm import llm_complete
 
-from typing import List
+SYSTEM_PROMPT = """
+You are an AI planner.
+Break the user's goal into clear, ordered, executable steps.
+Return steps as a numbered list.
+"""
 
-def plan(goal: str) -> List[str]:
-    """
-    Breaks a high-level goal into smaller executable steps.
-    """
-    steps = [
-        f"Understand the goal: {goal}",
-        "Identify required information",
-        "Perform analysis or research",
-        "Generate a clear, structured response"
-    ]
+def plan(goal: str):
+    response = llm_complete(SYSTEM_PROMPT, goal)
+    steps = []
+
+    for line in response.splitlines():
+        if line.strip() and line[0].isdigit():
+            steps.append(line.split(".", 1)[1].strip())
+
     return steps
