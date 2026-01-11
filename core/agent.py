@@ -26,15 +26,18 @@ class JarvisAgent:
         final_results = []
 
         for step in self.planner_steps:
-            result = self.executor.execute(step)
+            for attempt in range(2):  # retry once
+                result = self.executor.execute(step)
+                approved = self.reviewer.review(result)
 
-            approved = self.reviewer.review(result)
-            if approved:
-                self.short_memory.add(result)
-                self.long_memory.add(result)
-                final_results.append(result)
+                if "Tool result" in result or "summary" in result.lower():
+                    self.short_memory.add(result)
+                    self.long_memory.add(result)
+                    final_results.append(result)
+
 
         return final_results
+
 
     def run(self):
         self.think()
