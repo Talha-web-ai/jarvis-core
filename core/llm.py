@@ -1,4 +1,5 @@
 # core/llm.py
+
 import requests
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
@@ -13,20 +14,26 @@ USER:
 {user_prompt}
 """
 
-    resp = requests.post(
-        OLLAMA_URL,
-        json={
-            "model": MODEL,
-            "prompt": prompt,
-            "stream": False
-        },
-        timeout=180
-    )
+    try:
+        resp = requests.post(
+            OLLAMA_URL,
+            json={
+                "model": MODEL,
+                "prompt": prompt,
+                "stream": False,
+                "options": {
+                    "num_predict": 300  # ⛔ prevent token explosion
+                }
+            },
+            timeout=90  # ⛔ prevent CPU death
+        )
 
-    data = resp.json()
+        data = resp.json()
 
-    # DEBUG SAFETY
-    if "response" not in data:
-        return f"[LLM ERROR] {data}"
+        if "response" not in data:
+            return f"[LLM ERROR] {data}"
 
-    return data["response"].strip()
+        return data["response"].strip()
+
+    except requests.exceptions.RequestException as e:
+        return f"[LLM TIMEOUT] {str(e)}"

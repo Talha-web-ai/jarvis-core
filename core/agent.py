@@ -1,20 +1,23 @@
 # core/agent.py
 
+from rich.console import Console
 from core.planner import plan
 from core.executor import ExecutorAgent
 from core.reviewer import ReviewerAgent
 from memory.short_term import ShortTermMemory
 from memory.long_term import LongTermMemory
-from rich.console import Console
 
-console = Console()
+console =j = Console()
 
 class JarvisAgent:
-    def __init__(self, goal: str):
+    def __init__(self, goal: str, fast_mode: bool = True):
         self.goal = goal
+        self.fast_mode = fast_mode
         self.planner_steps = []
+
         self.executor = ExecutorAgent()
         self.reviewer = ReviewerAgent()
+
         self.short_memory = ShortTermMemory()
         self.long_memory = LongTermMemory()
 
@@ -26,18 +29,27 @@ class JarvisAgent:
         final_results = []
 
         for step in self.planner_steps:
-            for attempt in range(2):  # retry once
-                result = self.executor.execute(step)
-                approved = self.reviewer.review(result)
+            result = self.executor.execute(step)
 
-                if "Tool result" in result or "summary" in result.lower():
-                    self.short_memory.add(result)
-                    self.long_memory.add(result)
-                    final_results.append(result)
+            # ⚡ FAST MODE: no reviewer, no retries
+            if self.fast_mode:
+                final_results.append(result)
 
+                # 🛑 HARD STOP after summary
+                if "summary" in result.lower():
+                    return final_results
+
+                continue
+
+            # 🧐 Normal path with reviewer
+            approved = self.reviewer.review(result)
+            if approved:
+                final_results.append(result)
+
+                if "summary" in result.lower():
+                    return final_results
 
         return final_results
-
 
     def run(self):
         self.think()
