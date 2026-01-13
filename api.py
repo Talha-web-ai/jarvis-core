@@ -1,22 +1,17 @@
 # api.py
 
-from fastapi import FastAPI
+from fastapi import APIRouter
 from pydantic import BaseModel
 from typing import Optional
 
 from core.agent import JarvisAgent
 from memory.task_store import TaskStore
 
-app = FastAPI(
-    title="JARVIS Backend",
-    description="Autonomous AI Agent Backend",
-    version="0.1.0"
-)
-
+router = APIRouter()
 store = TaskStore()
 
 
-# ----------- Schemas -----------
+# -------- Schemas --------
 
 class ExecuteRequest(BaseModel):
     goal: str
@@ -28,17 +23,17 @@ class ExecuteResponse(BaseModel):
     confidence: Optional[str] = None
 
 
-# ----------- Routes -----------
+# -------- Routes --------
 
-@app.get("/")
+@router.get("/")
 def root():
     return {
-        "message": "JARVIS backend is running",
+        "message": "JARVIS backend running",
         "status": "healthy"
     }
 
 
-@app.post("/execute", response_model=ExecuteResponse)
+@router.post("/execute", response_model=ExecuteResponse)
 def execute_task(req: ExecuteRequest):
     agent = JarvisAgent(req.goal, fast_mode=True)
     results = agent.run()
@@ -71,7 +66,7 @@ def execute_task(req: ExecuteRequest):
     )
 
 
-@app.post("/continue", response_model=ExecuteResponse)
+@router.post("/continue", response_model=ExecuteResponse)
 def continue_last_task():
     task = store.get_last_incomplete_task()
     if not task:
@@ -93,6 +88,6 @@ def continue_last_task():
     )
 
 
-@app.get("/memory")
+@router.get("/memory")
 def memory_dump():
     return store._load()
