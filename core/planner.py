@@ -1,7 +1,6 @@
-from core.llm import llm_complete
-from core.cache import SimpleCache
+# core/planner.py
 
-cache = SimpleCache()
+from core.llm import llm_complete
 
 SYSTEM_PROMPT = """
 You are an AI planner.
@@ -12,17 +11,12 @@ Rules:
   1. Read the file
   2. Stop
 
-Do NOT include extraction, refinement, or rewriting steps.
+Do NOT include extraction, rewriting, or refinement steps.
 
 Return steps as a numbered list.
 """
 
-
 def plan(goal: str):
-    cached = cache.get(goal)
-    if cached:
-        return cached
-
     response = llm_complete(SYSTEM_PROMPT, goal)
     steps = []
 
@@ -30,5 +24,4 @@ def plan(goal: str):
         if line.strip() and line[0].isdigit():
             steps.append(line.split(".", 1)[1].strip())
 
-    cache.set(goal, steps)
     return steps
