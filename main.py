@@ -13,7 +13,8 @@ def main():
         console.print("[red]Please provide a goal for JARVIS[/red]")
         return
 
-    goal = sys.argv[1].strip().lower()
+    raw_goal = sys.argv[1].strip()
+    goal = raw_goal.lower()
     store = TaskStore()
 
     # 🔁 CONTINUE LAST TASK
@@ -28,24 +29,25 @@ def main():
         agent.task = task
         agent.planner_steps = task["steps"]
         results = agent.act()
-
     else:
-        agent = JarvisAgent(sys.argv[1], fast_mode=True)
+        agent = JarvisAgent(raw_goal, fast_mode=True)
         results = agent.run()
 
     if not results:
         console.print("[yellow]No meaningful output produced.[/yellow]")
         return
 
-    # Deterministic final output (no LLM)
-    for r in results:
-        if "summary" in r.lower() or r.startswith("#"):
-            console.print("\n[bold cyan]Final Answer:[/bold cyan]")
-            console.print(r)
-            return
+    final = results[-1]
 
     console.print("\n[bold cyan]Final Answer:[/bold cyan]")
-    console.print(results[-1])
+
+    if "LOW CONFIDENCE" in final:
+        console.print("[yellow]⚠️ Result has low confidence[/yellow]")
+
+    if "RESULT_FAILED" in final:
+        console.print("[red]❌ Task failed due to unreliable data[/red]")
+
+    console.print(final)
 
 
 if __name__ == "__main__":
