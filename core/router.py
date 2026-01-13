@@ -1,23 +1,21 @@
 # core/router.py
 
+import re
 from core.llm import llm_complete
-from core.cache import SimpleCache
 from tools.registry import TOOLS, get_tools_prompt
-
-route_cache = SimpleCache()
 
 SYSTEM_PROMPT = """
 You are a tool router for an autonomous AI agent.
 
 Rules:
-- Use read_file ONLY when reading file contents (e.g., README.md)
-- Use run_shell ONLY for directory checks (ls, pwd, whoami)
-- NEVER use shell commands to read files
-- NEVER guess file paths
-- NEVER leave ARG empty
+- Use fetch_web ONLY for reading documentation or articles
+- NEVER browse links recursively
+- NEVER fetch multiple URLs
+- Use read_file for local files
+- Use run_shell ONLY for ls or pwd
 - If no tool is required, return TOOL:NONE
 
-Respond in EXACTLY one of these formats:
+Respond EXACTLY in this format:
 
 TOOL:<tool_name>
 ARG:<argument>
@@ -27,19 +25,26 @@ OR
 TOOL:NONE
 """
 
+# 🔒 Robust URL extraction (FINAL)
+URL_REGEX = re.compile(
+    r"(https?://[^\s<>\]\)]+)",
+    re.IGNORECASE
+)
+
 def route(step: str):
     step_lower = step.lower()
 
-    cached = route_cache.get(step)
-    if cached:
-        return cached
+    # 📄 README shortcut
+    if "readme" in step_lower:
+        return "read_file", "README.md"
 
-    # 🔒 Heuristic shortcut
-    if "readme" in step_lower or "summarize" in step_lower:
-        decision = ("read_file", "README.md")
-        route_cache.set(step, decision)
-        return decision
+    # 🌐 Extract URL ANYWHERE in sentence
+    match = URL_REGEX.search(step)
+    if match:
+        url = match.group(1).strip().rstrip(").,]")
+        return "fetch_web", url
 
+    # 🧠 LLM routing fallback
     prompt = f"""
 Task Step:
 {step}
@@ -47,32 +52,28 @@ Task Step:
 {get_tools_prompt()}
 """
 
-    decision_text = llm_complete(SYSTEM_PROMPT, prompt)
+    decision = llm_complete(SYSTEM_PROMPT, prompt)
 
-    if not decision_text or not isinstance(decision_text, str):
+    if not decision or not isinstance(decision, str):
         return None, None
 
-    decision_text = decision_text.strip()
-
-    if decision_text.startswith("TOOL:NONE"):
-        route_cache.set(step, (None, None))
-        return None, None
-
-    lines = decision_text.splitlines()
-    if len(lines) < 2:
+    if decision.startswith("TOOL:NONE"):
         return None, None
 
     try:
+        lines = decision.splitlines()
         tool = lines[0].split(":", 1)[1].strip()
         arg = lines[1].split(":", 1)[1].strip()
+
+        # Sanitize arg if it's a URL
+        url_match = URL_REGEX.search(arg)
+        if url_match:
+            arg = url_match.group(1).strip()
+
+        if tool not in TOOLS:
+            return None, None
+
+        return tool, arg
+
     except Exception:
         return None, None
-
-    if tool not in TOOLS:
-        return None, None
-
-    if not arg or arg.lower() in ["none", "null", ""]:
-        return None, None
-
-    route_cache.set(step, (tool, arg))
-    return tool, arg
