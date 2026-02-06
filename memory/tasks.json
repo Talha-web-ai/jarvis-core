@@ -22,12 +22,13 @@
       "Search for a summary of the website content",
       "Extract and report the summary from search results"
     ],
-    "current_step": 1,
+    "current_step": 2,
     "status": "failed",
     "results": [
+      "RESULT_FAILED: Tool output unreliable.",
       "RESULT_FAILED: Tool output unreliable."
     ],
-    "last_updated": "2026-01-13T06:42:47.850808"
+    "last_updated": "2026-01-13T07:03:15.752310"
   },
   {
     "id": "cda224a9-8be9-4de5-837f-7b1fd230152f",
@@ -37,11 +38,222 @@
       "Read the content of README.md file: `cat README.md`",
       "Summarize the contents: _Interpret the text from the README.md file and summarize its key points._"
     ],
+    "current_step": 2,
+    "status": "completed",
+    "results": [
+      "SUMMARY_SOURCE (LOW CONFIDENCE):\n/home/luffy/jarvis",
+      "SUMMARY_SOURCE:\n# JARVIS \ud83e\udd16  \n**A Local, Autonomous AI Assistant with Memory, Self-Review, and Tool Execution**\n\nJARVIS is a full-stack autonomous AI assistant inspired by the idea of a true AI operating layer \u2014 not just a chatbot.\n\nUnlike typical AI demos, JARVIS is designed as a **real system** that can:\n- Understand high-level goals\n- Plan tasks using an LLM\n- Execute actions using tools\n- Review its own output\n- Persist memory across runs\n- Operate fully **offline** using a **local LLM (Ollama)**\n\n---\n\n## \ud83d\ude80 Key Features\n\n### \ud83e\udde0 Autonomous Reasoning\n- Goal-based planning using a local LLM\n- Breaks vague goals into ordered, executable steps\n\n### \ud83e\uddd1\u200d\ud83e\udd1d\u200d\ud83e\uddd1 Multi-Agent Architecture\n- **Planner Agent** \u2013 decomposes goals into steps  \n- **Executor Agent** \u2013 executes steps and tools  \n- **Reviewer Agent** \u2013 validates output quality before acceptance  \n\n### \ud83d\udcbe Memory System\n- **Short-term memory** (per execution)\n- **Long-term memory** (persistent across runs)\n- Approved results are automatically stored\n\n### \ud83d\udee0\ufe0f Tool Execution (Safe by Design)\n- LLM decides **which tool to use**\n- Strictly sandboxed tools:\n  - File reading (project directory only)\n  - Shell commands (allow-listed only)\n- Hard safety guardrails (no arbitrary execution)\n\n### \ud83d\udd01 Reliability\n- Retry logic on failed steps\n- Defensive handling of LLM errors\n- No crashes on malformed responses\n\n### \ud83d\udd12 Privacy-First\n- Runs **entirely locally**\n- No OpenAI / paid APIs\n- Uses Ollama + open-source models (Mistral, LLaMA, etc.)\n\n---\n\n## \ud83c\udfd7\ufe0f Architecture Overview\n\nUser Goal\n\u2193\nJARVIS Agent\n\u251c\u2500\u2500 Planner Agent (LLM)\n\u251c\u2500\u2500 Executor Agent\n\u2502 \u2514\u2500\u2500 Tool Router (LLM)\n\u2502 \u251c\u2500\u2500 File Tool\n\u2502 \u2514\u2500\u2500 Shell Tool\n\u251c\u2500\u2500 Reviewer Agent (LLM)\n\u2514\u2500\u2500 Memory System\n\u251c\u2500\u2500 Short-Term\n\u2514\u2500\u2500 Long-Term\n\n\n---\n\n## \ud83d\udcc2 Project Structure\n\njarvis/\n\u251c\u2500\u2500 core/\n\u2502 \u251c\u2500\u2500 agent.py # Main control loop\n\u2502 \u251c\u2500\u2500 planner.py # LLM-based planning\n\u2502 \u251c\u2500\u2500 executor.py # Step execution + tool usage\n\u2502 \u251c\u2500\u2500 reviewer.py # LLM-based self-review\n\u2502 \u251c\u2500\u2500 router.py # Tool selection logic\n\u2502 \u2514\u2500\u2500 llm.py # Local LLM abstraction (Ollama)\n\u2502\n\u251c\u2500\u2500 tools/\n\u2502 \u251c\u2500\u2500 registry.py # Tool registry\n\u2502 \u251c\u2500\u2500 file_tool.py # Safe file reader\n\u2502 \u2514\u2500\u2500 shell_tool.py # Safe shell execution\n\u2502\n\u251c\u2500\u2500 memory/\n\u2502 \u251c\u2500\u2500 short_term.py # Session memory\n\u2502 \u2514\u2500\u2500 long_term.py # Persistent memory\n\u2502\n\u251c\u2500\u2500 security/ # Reserved for future guardrails\n\u251c\u2500\u2500 main.py # Entry point\n\u251c\u2500\u2500 requirements.txt\n\u2514\u2500\u2500 README.md\n\n\n---\n\n## \ud83e\udde0 Local LLM Setup (Required)\n\nJARVIS uses **Ollama** for local LLM inference.\n\n### Install Ollama\n```bash\ncurl -fsSL https://ollama.com/install.sh | sh\n\n## Pull a Model (Recommended)\nollama pull mistral:7b\n\n"
+    ],
+    "last_updated": "2026-01-13T06:51:37.463076"
+  },
+  {
+    "id": "6f6054c6-c9b5-4834-804e-a300db0a6bd4",
+    "goal": "Read README.md and summarize",
+    "steps": [
+      "Open the file `README.md` in a text editor or viewer.",
+      "Read through the content of the `README.md` file to understand its contents.",
+      "Summarize the key points of the `README.md` file in your response. (Assuming the README.md contains information about the purpose, usage, installation, or other relevant details of a project.)"
+    ],
+    "current_step": 1,
+    "status": "completed",
+    "results": [
+      "SUMMARY_SOURCE:\n# JARVIS \ud83e\udd16  \n**A Local, Autonomous AI Assistant with Memory, Self-Review, and Tool Execution**\n\nJARVIS is a full-stack autonomous AI assistant inspired by the idea of a true AI operating layer \u2014 not just a chatbot.\n\nUnlike typical AI demos, JARVIS is designed as a **real system** that can:\n- Understand high-level goals\n- Plan tasks using an LLM\n- Execute actions using tools\n- Review its own output\n- Persist memory across runs\n- Operate fully **offline** using a **local LLM (Ollama)**\n\n---\n\n## \ud83d\ude80 Key Features\n\n### \ud83e\udde0 Autonomous Reasoning\n- Goal-based planning using a local LLM\n- Breaks vague goals into ordered, executable steps\n\n### \ud83e\uddd1\u200d\ud83e\udd1d\u200d\ud83e\uddd1 Multi-Agent Architecture\n- **Planner Agent** \u2013 decomposes goals into steps  \n- **Executor Agent** \u2013 executes steps and tools  \n- **Reviewer Agent** \u2013 validates output quality before acceptance  \n\n### \ud83d\udcbe Memory System\n- **Short-term memory** (per execution)\n- **Long-term memory** (persistent across runs)\n- Approved results are automatically stored\n\n### \ud83d\udee0\ufe0f Tool Execution (Safe by Design)\n- LLM decides **which tool to use**\n- Strictly sandboxed tools:\n  - File reading (project directory only)\n  - Shell commands (allow-listed only)\n- Hard safety guardrails (no arbitrary execution)\n\n### \ud83d\udd01 Reliability\n- Retry logic on failed steps\n- Defensive handling of LLM errors\n- No crashes on malformed responses\n\n### \ud83d\udd12 Privacy-First\n- Runs **entirely locally**\n- No OpenAI / paid APIs\n- Uses Ollama + open-source models (Mistral, LLaMA, etc.)\n\n---\n\n## \ud83c\udfd7\ufe0f Architecture Overview\n\nUser Goal\n\u2193\nJARVIS Agent\n\u251c\u2500\u2500 Planner Agent (LLM)\n\u251c\u2500\u2500 Executor Agent\n\u2502 \u2514\u2500\u2500 Tool Router (LLM)\n\u2502 \u251c\u2500\u2500 File Tool\n\u2502 \u2514\u2500\u2500 Shell Tool\n\u251c\u2500\u2500 Reviewer Agent (LLM)\n\u2514\u2500\u2500 Memory System\n\u251c\u2500\u2500 Short-Term\n\u2514\u2500\u2500 Long-Term\n\n\n---\n\n## \ud83d\udcc2 Project Structure\n\njarvis/\n\u251c\u2500\u2500 core/\n\u2502 \u251c\u2500\u2500 agent.py # Main control loop\n\u2502 \u251c\u2500\u2500 planner.py # LLM-based planning\n\u2502 \u251c\u2500\u2500 executor.py # Step execution + tool usage\n\u2502 \u251c\u2500\u2500 reviewer.py # LLM-based self-review\n\u2502 \u251c\u2500\u2500 router.py # Tool selection logic\n\u2502 \u2514\u2500\u2500 llm.py # Local LLM abstraction (Ollama)\n\u2502\n\u251c\u2500\u2500 tools/\n\u2502 \u251c\u2500\u2500 registry.py # Tool registry\n\u2502 \u251c\u2500\u2500 file_tool.py # Safe file reader\n\u2502 \u2514\u2500\u2500 shell_tool.py # Safe shell execution\n\u2502\n\u251c\u2500\u2500 memory/\n\u2502 \u251c\u2500\u2500 short_term.py # Session memory\n\u2502 \u2514\u2500\u2500 long_term.py # Persistent memory\n\u2502\n\u251c\u2500\u2500 security/ # Reserved for future guardrails\n\u251c\u2500\u2500 main.py # Entry point\n\u251c\u2500\u2500 requirements.txt\n\u2514\u2500\u2500 README.md\n\n\n---\n\n## \ud83e\udde0 Local LLM Setup (Required)\n\nJARVIS uses **Ollama** for local LLM inference.\n\n### Install Ollama\n```bash\ncurl -fsSL https://ollama.com/install.sh | sh\n\n## Pull a Model (Recommended)\nollama pull mistral:7b\n\n"
+    ],
+    "last_updated": "2026-01-13T06:51:14.885014"
+  },
+  {
+    "id": "9e92058d-df42-4e0b-ae30-9928fcff3cb2",
+    "goal": "Read README.md and summarize",
+    "steps": [
+      "Access the current working directory to locate the README.md file.",
+      "Open and read the content of the README.md file.",
+      "Summarize the main points from the README.md content. (If necessary, parse the text to extract key information.)"
+    ],
+    "current_step": 1,
+    "status": "completed",
+    "results": [
+      "SUMMARY_SOURCE:\n# JARVIS \ud83e\udd16  \n**A Local, Autonomous AI Assistant with Memory, Self-Review, and Tool Execution**\n\nJARVIS is a full-stack autonomous AI assistant inspired by the idea of a true AI operating layer \u2014 not just a chatbot.\n\nUnlike typical AI demos, JARVIS is designed as a **real system** that can:\n- Understand high-level goals\n- Plan tasks using an LLM\n- Execute actions using tools\n- Review its own output\n- Persist memory across runs\n- Operate fully **offline** using a **local LLM (Ollama)**\n\n---\n\n## \ud83d\ude80 Key Features\n\n### \ud83e\udde0 Autonomous Reasoning\n- Goal-based planning using a local LLM\n- Breaks vague goals into ordered, executable steps\n\n### \ud83e\uddd1\u200d\ud83e\udd1d\u200d\ud83e\uddd1 Multi-Agent Architecture\n- **Planner Agent** \u2013 decomposes goals into steps  \n- **Executor Agent** \u2013 executes steps and tools  \n- **Reviewer Agent** \u2013 validates output quality before acceptance  \n\n### \ud83d\udcbe Memory System\n- **Short-term memory** (per execution)\n- **Long-term memory** (persistent across runs)\n- Approved results are automatically stored\n\n### \ud83d\udee0\ufe0f Tool Execution (Safe by Design)\n- LLM decides **which tool to use**\n- Strictly sandboxed tools:\n  - File reading (project directory only)\n  - Shell commands (allow-listed only)\n- Hard safety guardrails (no arbitrary execution)\n\n### \ud83d\udd01 Reliability\n- Retry logic on failed steps\n- Defensive handling of LLM errors\n- No crashes on malformed responses\n\n### \ud83d\udd12 Privacy-First\n- Runs **entirely locally**\n- No OpenAI / paid APIs\n- Uses Ollama + open-source models (Mistral, LLaMA, etc.)\n\n---\n\n## \ud83c\udfd7\ufe0f Architecture Overview\n\nUser Goal\n\u2193\nJARVIS Agent\n\u251c\u2500\u2500 Planner Agent (LLM)\n\u251c\u2500\u2500 Executor Agent\n\u2502 \u2514\u2500\u2500 Tool Router (LLM)\n\u2502 \u251c\u2500\u2500 File Tool\n\u2502 \u2514\u2500\u2500 Shell Tool\n\u251c\u2500\u2500 Reviewer Agent (LLM)\n\u2514\u2500\u2500 Memory System\n\u251c\u2500\u2500 Short-Term\n\u2514\u2500\u2500 Long-Term\n\n\n---\n\n## \ud83d\udcc2 Project Structure\n\njarvis/\n\u251c\u2500\u2500 core/\n\u2502 \u251c\u2500\u2500 agent.py # Main control loop\n\u2502 \u251c\u2500\u2500 planner.py # LLM-based planning\n\u2502 \u251c\u2500\u2500 executor.py # Step execution + tool usage\n\u2502 \u251c\u2500\u2500 reviewer.py # LLM-based self-review\n\u2502 \u251c\u2500\u2500 router.py # Tool selection logic\n\u2502 \u2514\u2500\u2500 llm.py # Local LLM abstraction (Ollama)\n\u2502\n\u251c\u2500\u2500 tools/\n\u2502 \u251c\u2500\u2500 registry.py # Tool registry\n\u2502 \u251c\u2500\u2500 file_tool.py # Safe file reader\n\u2502 \u2514\u2500\u2500 shell_tool.py # Safe shell execution\n\u2502\n\u251c\u2500\u2500 memory/\n\u2502 \u251c\u2500\u2500 short_term.py # Session memory\n\u2502 \u2514\u2500\u2500 long_term.py # Persistent memory\n\u2502\n\u251c\u2500\u2500 security/ # Reserved for future guardrails\n\u251c\u2500\u2500 main.py # Entry point\n\u251c\u2500\u2500 requirements.txt\n\u2514\u2500\u2500 README.md\n\n\n---\n\n## \ud83e\udde0 Local LLM Setup (Required)\n\nJARVIS uses **Ollama** for local LLM inference.\n\n### Install Ollama\n```bash\ncurl -fsSL https://ollama.com/install.sh | sh\n\n## Pull a Model (Recommended)\nollama pull mistral:7b\n\n"
+    ],
+    "last_updated": "2026-01-13T06:51:24.409303"
+  },
+  {
+    "id": "ebfd7bfc-ad57-4e9e-9e96-2268c4543157",
+    "goal": "Read https://google.com and summarize",
+    "steps": [
+      "Navigate to https://google.com",
+      "Search for \"Summary of Google\" on the search bar",
+      "Extract and report the main points from the search results' summaries"
+    ],
+    "current_step": 1,
+    "status": "failed",
+    "results": [
+      "RESULT_FAILED: Tool output unreliable."
+    ],
+    "last_updated": "2026-01-13T07:03:30.915156"
+  },
+  {
+    "id": "aa013e9d-1ed2-47b6-9329-a488ba847011",
+    "goal": "Read https://google.com and summarize",
+    "steps": [
+      "Navigate to <https://google.com>",
+      "Search for \"Summary of Google\" on the search bar",
+      "Read and Summarize top result"
+    ],
+    "current_step": 1,
+    "status": "failed",
+    "results": [
+      "RESULT_FAILED: Tool output unreliable."
+    ],
+    "last_updated": "2026-01-13T07:03:37.116970"
+  },
+  {
+    "id": "251895f7-da93-4d65-b3f7-afb506869d92",
+    "goal": "Read https://google.com and summarize",
+    "steps": [
+      "Open browser and navigate to https://google.com",
+      "Search for \"Summarization of Google's services\"",
+      "Extract and summarize the main points from top search results"
+    ],
+    "current_step": 1,
+    "status": "failed",
+    "results": [
+      "RESULT_FAILED: Tool output unreliable."
+    ],
+    "last_updated": "2026-01-13T07:03:44.200664"
+  },
+  {
+    "id": "c2f64521-534a-46d5-ab79-31249db4022e",
+    "goal": "Read https://google.com and summarize",
+    "steps": [
+      "Navigate to Google homepage (https://google.com)",
+      "Search for \"Summary of Google\" on the search bar",
+      "Read the top-ranked result summary from the search results."
+    ],
+    "current_step": 1,
+    "status": "failed",
+    "results": [
+      "RESULT_FAILED: Tool output unreliable."
+    ],
+    "last_updated": "2026-01-13T07:03:51.387815"
+  },
+  {
+    "id": "ec284c26-a0fa-44f5-966f-2eaa8f09d20e",
+    "goal": "Read https://google.com and summarize",
+    "steps": [
+      "Visit URL: https://google.com",
+      "Browse Homepage: Briefly browse the content displayed on the Google homepage",
+      "Summarize: Identify and summarize the main features of the Google homepage, such as search bar, news, images, etc."
+    ],
+    "current_step": 1,
+    "status": "failed",
+    "results": [
+      "RESULT_FAILED: Tool output unreliable."
+    ],
+    "last_updated": "2026-01-13T07:04:02.284066"
+  },
+  {
+    "id": "41f863d5-a645-4c5b-aabe-bbad8f78e202",
+    "goal": "Read https://google.com and summarize",
+    "steps": [
+      "Visit <https://google.com> for a summary.",
+      "Browse the homepage to understand the main features of Google.",
+      "Summarize the findings based on the observed main features of Google."
+    ],
+    "current_step": 1,
+    "status": "failed",
+    "results": [
+      "RESULT_FAILED: Tool output unreliable."
+    ],
+    "last_updated": "2026-01-13T07:04:09.701366"
+  },
+  {
+    "id": "30c0c229-539c-4882-bb71-0f0653e67680",
+    "goal": "Read https://google.com and summarize",
+    "steps": [
+      "Navigate to Google's homepage (https://google.com)",
+      "Search for 'Summary of Google's services and mission'",
+      "Extract and summarize the key points from the search results"
+    ],
+    "current_step": 1,
+    "status": "failed",
+    "results": [
+      "RESULT_FAILED: Tool output unreliable."
+    ],
+    "last_updated": "2026-01-13T07:04:17.316191"
+  },
+  {
+    "id": "5f989dd9-455b-4bf1-84aa-95f84a9921d0",
+    "goal": "Read https://google.com and summarize",
+    "steps": [
+      "Open web browser and go to https://google.com",
+      "Scan main page to understand the primary services provided by Google (search engine, email, maps, etc.)",
+      "Summarize: Google is a multinational technology company that focuses on internet-related services and products such as search engine (Google Search), cloud computing (Google Cloud Platform), software, and hardware. It was founded by Larry Page and Sergey Brin in 1998."
+    ],
+    "current_step": 1,
+    "status": "failed",
+    "results": [
+      "RESULT_FAILED: Tool output unreliable."
+    ],
+    "last_updated": "2026-01-13T07:04:34.577278"
+  },
+  {
+    "id": "d37d58a5-773e-46df-9a6d-0cf41e48daea",
+    "goal": "Read https://google.com and summarize",
+    "steps": [
+      "Visit URL: https://www.google.com/ncr",
+      "Extract and Summarize Main Content from the Homepage (Search bar, News Headlines, Featured Information)",
+      "Return Summarized Information"
+    ],
+    "current_step": 1,
+    "status": "failed",
+    "results": [
+      "RESULT_FAILED: Tool output unreliable."
+    ],
+    "last_updated": "2026-01-13T07:04:42.744977"
+  },
+  {
+    "id": "705911d6-906d-45ca-b2dc-a5c63ae2b1b0",
+    "goal": "Read https://google.com and summarize",
+    "steps": [
+      "Visit URL: https://www.google.com",
+      "Navigate to the main search bar and conduct a broad search query such as \"Google summary\" or \"What is Google in a nutshell\".",
+      "Extract key points from the top results that provide a concise, accurate summary of what Google is, its purpose, and major services offered (e.g., search engine, Gmail, Google Maps)."
+    ],
+    "current_step": 1,
+    "status": "failed",
+    "results": [
+      "RESULT_FAILED: Tool output unreliable."
+    ],
+    "last_updated": "2026-01-13T07:05:12.066399"
+  },
+  {
+    "id": "8336ebb2-828d-4eb0-ae01-d5fa93c6f57c",
+    "goal": "Read README.md and summarize",
+    "steps": [
+      "Access the content of the README.md file (web reading)",
+      "Extract and summarize the main points from the README.md",
+      "Return the summary as the response to the user's request"
+    ],
+    "current_step": 1,
+    "status": "completed",
+    "results": [
+      "SUMMARY_SOURCE:\n# JARVIS \ud83e\udd16  \n**A Local, Autonomous AI Assistant with Memory, Self-Review, and Tool Execution**\n\nJARVIS is a full-stack autonomous AI assistant inspired by the idea of a true AI operating layer \u2014 not just a chatbot.\n\nUnlike typical AI demos, JARVIS is designed as a **real system** that can:\n- Understand high-level goals\n- Plan tasks using an LLM\n- Execute actions using tools\n- Review its own output\n- Persist memory across runs\n- Operate fully **offline** using a **local LLM (Ollama)**\n\n---\n\n## \ud83d\ude80 Key Features\n\n### \ud83e\udde0 Autonomous Reasoning\n- Goal-based planning using a local LLM\n- Breaks vague goals into ordered, executable steps\n\n### \ud83e\uddd1\u200d\ud83e\udd1d\u200d\ud83e\uddd1 Multi-Agent Architecture\n- **Planner Agent** \u2013 decomposes goals into steps  \n- **Executor Agent** \u2013 executes steps and tools  \n- **Reviewer Agent** \u2013 validates output quality before acceptance  \n\n### \ud83d\udcbe Memory System\n- **Short-term memory** (per execution)\n- **Long-term memory** (persistent across runs)\n- Approved results are automatically stored\n\n### \ud83d\udee0\ufe0f Tool Execution (Safe by Design)\n- LLM decides **which tool to use**\n- Strictly sandboxed tools:\n  - File reading (project directory only)\n  - Shell commands (allow-listed only)\n- Hard safety guardrails (no arbitrary execution)\n\n### \ud83d\udd01 Reliability\n- Retry logic on failed steps\n- Defensive handling of LLM errors\n- No crashes on malformed responses\n\n### \ud83d\udd12 Privacy-First\n- Runs **entirely locally**\n- No OpenAI / paid APIs\n- Uses Ollama + open-source models (Mistral, LLaMA, etc.)\n\n---\n\n## \ud83c\udfd7\ufe0f Architecture Overview\n\nUser Goal\n\u2193\nJARVIS Agent\n\u251c\u2500\u2500 Planner Agent (LLM)\n\u251c\u2500\u2500 Executor Agent\n\u2502 \u2514\u2500\u2500 Tool Router (LLM)\n\u2502 \u251c\u2500\u2500 File Tool\n\u2502 \u2514\u2500\u2500 Shell Tool\n\u251c\u2500\u2500 Reviewer Agent (LLM)\n\u2514\u2500\u2500 Memory System\n\u251c\u2500\u2500 Short-Term\n\u2514\u2500\u2500 Long-Term\n\n\n---\n\n## \ud83d\udcc2 Project Structure\n\njarvis/\n\u251c\u2500\u2500 core/\n\u2502 \u251c\u2500\u2500 agent.py # Main control loop\n\u2502 \u251c\u2500\u2500 planner.py # LLM-based planning\n\u2502 \u251c\u2500\u2500 executor.py # Step execution + tool usage\n\u2502 \u251c\u2500\u2500 reviewer.py # LLM-based self-review\n\u2502 \u251c\u2500\u2500 router.py # Tool selection logic\n\u2502 \u2514\u2500\u2500 llm.py # Local LLM abstraction (Ollama)\n\u2502\n\u251c\u2500\u2500 tools/\n\u2502 \u251c\u2500\u2500 registry.py # Tool registry\n\u2502 \u251c\u2500\u2500 file_tool.py # Safe file reader\n\u2502 \u2514\u2500\u2500 shell_tool.py # Safe shell execution\n\u2502\n\u251c\u2500\u2500 memory/\n\u2502 \u251c\u2500\u2500 short_term.py # Session memory\n\u2502 \u2514\u2500\u2500 long_term.py # Persistent memory\n\u2502\n\u251c\u2500\u2500 security/ # Reserved for future guardrails\n\u251c\u2500\u2500 main.py # Entry point\n\u251c\u2500\u2500 requirements.txt\n\u2514\u2500\u2500 README.md\n\n\n---\n\n## \ud83e\udde0 Local LLM Setup (Required)\n\nJARVIS uses **Ollama** for local LLM inference.\n\n### Install Ollama\n```bash\ncurl -fsSL https://ollama.com/install.sh | sh\n\n## Pull a Model (Recommended)\nollama pull mistral:7b\n\n"
+    ],
+    "last_updated": "2026-01-13T07:14:26.261002"
+  },
+  {
+    "id": "d9e9a3ea-91b6-4354-997c-5cafbfd1702b",
+    "goal": "Read README.md and summarize",
+    "steps": [
+      "Navigate to the current directory (assuming this conversation is happening in a terminal) using the command `cd $(dirname \"$0\")` or `cd \"${0%/*}\"`.",
+      "Read the content of the README.md file using the command `cat README.md`.",
+      "Summarize the contents by extracting key points, using the summarized information to help in further tasks if necessary."
+    ],
     "current_step": 1,
     "status": "completed_with_low_confidence",
     "results": [
       "SUMMARY_SOURCE (LOW CONFIDENCE):\n/home/luffy/jarvis"
     ],
-    "last_updated": "2026-01-13T06:43:32.110862"
+    "last_updated": "2026-01-13T07:18:26.351348"
   }
 ]

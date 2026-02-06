@@ -1,66 +1,57 @@
-# core/agent.py
-
-from rich.console import Console
-from datetime import datetime
-
 from core.planner import plan
-from core.executor import ExecutorAgent
-from memory.task_store import TaskStore
+from core.executor import execute
+from core.reviewer import review
+from memory.long_term import LongTermMemory
 
-console = Console()
 
 class JarvisAgent:
-    def __init__(self, goal: str, fast_mode: bool = True):
+    def __init__(self, goal: str, fast_mode: bool = False):
         self.goal = goal
         self.fast_mode = fast_mode
-
-        self.executor = ExecutorAgent()
-        self.task_store = TaskStore()
-
-        self.task = None
-        self.planner_steps = []
-
-    def think(self):
-        console.print("[bold green]JARVIS planning...[/bold green]")
-        self.planner_steps = plan(self.goal)
-        self.task = self.task_store.create_task(self.goal, self.planner_steps)
-
-    def act(self):
-        final_results = []
-
-        for i in range(self.task["current_step"], len(self.task["steps"])):
-            step = self.task["steps"][i]
-            result = self.executor.execute(step)
-
-            final_results.append(result)
-            self.task["results"].append(result)
-            self.task["current_step"] = i + 1
-            self.task["last_updated"] = datetime.utcnow().isoformat()
-
-            # ❌ Tool failed
-            if "RESULT_FAILED" in result:
-                self.task["status"] = "failed"
-                self.task_store.update_task(self.task)
-                return final_results
-
-            # ⚠️ Low confidence result
-            if "LOW CONFIDENCE" in result:
-                self.task["status"] = "completed_with_low_confidence"
-                self.task_store.update_task(self.task)
-                return final_results
-
-            # ✅ Normal completion
-            if "SUMMARY_SOURCE" in result:
-                self.task["status"] = "completed"
-                self.task_store.update_task(self.task)
-                return final_results
-
-            self.task_store.update_task(self.task)
-
-        self.task["status"] = "completed"
-        self.task_store.update_task(self.task)
-        return final_results
+        self.long_term_memory = LongTermMemory()
 
     def run(self):
-        self.think()
-        return self.act()
+        # 🔁 MEMORY RECALL FIRST
+        recalled = self.long_term_memory.recall(
+            self.goal,
+            min_confidence=0.75
+        )
+
+        if recalled:
+            return recalled[0]["content"]
+
+        steps = plan(self.goal)
+        results = []
+
+        for step in steps:
+            output = execute(step)
+
+            if not output:
+                continue
+
+            # 🚀 FAST MODE SKIPS REVIEW
+            if not self.fast_mode:
+                verdict = review(output if isinstance(output, str) else str(output))
+                if verdict != "APPROVE":
+                    continue
+
+            # ✅ NORMALIZE OUTPUT
+            text = None
+
+            if isinstance(output, str):
+                text = output
+            elif isinstance(output, dict):
+                text = output.get("result") or output.get("content")
+
+            if text:
+                results.append(text)
+
+        final_output = "\n\n".join(results)
+
+        if final_output.strip():
+            self.long_term_memory.add(
+                content=final_output,
+                confidence=0.8
+            )
+
+        return final_output

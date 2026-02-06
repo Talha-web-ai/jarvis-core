@@ -1,79 +1,47 @@
 # core/router.py
 
-import re
-from core.llm import llm_complete
-from tools.registry import TOOLS, get_tools_prompt
-
-SYSTEM_PROMPT = """
-You are a tool router for an autonomous AI agent.
-
-Rules:
-- Use fetch_web ONLY for reading documentation or articles
-- NEVER browse links recursively
-- NEVER fetch multiple URLs
-- Use read_file for local files
-- Use run_shell ONLY for ls or pwd
-- If no tool is required, return TOOL:NONE
-
-Respond EXACTLY in this format:
-
-TOOL:<tool_name>
-ARG:<argument>
-
-OR
-
-TOOL:NONE
-"""
-
-# 🔒 Robust URL extraction (FINAL)
-URL_REGEX = re.compile(
-    r"(https?://[^\s<>\]\)]+)",
-    re.IGNORECASE
-)
+from tools.registry import TOOLS
 
 def route(step: str):
+    """
+    Decide which tool to use for a given step.
+    HARD RULES > heuristics > fallback
+    """
     step_lower = step.lower()
 
-    # 📄 README shortcut
-    if "readme" in step_lower:
-        return "read_file", "README.md"
+    # 🚨 HARD RULE: README must always be read via file tool
+    if "readme.md" in step_lower or "read readme" in step_lower:
+        return {
+            "tool": "read_file",
+            "args": {"path": "README.md"}
+        }
 
-    # 🌐 Extract URL ANYWHERE in sentence
-    match = URL_REGEX.search(step)
-    if match:
-        url = match.group(1).strip().rstrip(").,]")
-        return "fetch_web", url
+    # 🚨 HARD RULE: explicit file reads
+    if "read" in step_lower and ".md" in step_lower:
+        words = step_lower.split()
+        for w in words:
+            if w.endswith(".md"):
+                return {
+                    "tool": "read_file",
+                    "args": {"path": w}
+                }
 
-    # 🧠 LLM routing fallback
-    prompt = f"""
-Task Step:
-{step}
+    # 🌐 URL access (handled by web tool if exists)
+    if step_lower.startswith("http"):
+        return {
+            "tool": "web_fetch",
+            "args": {"url": step.strip()}
+        }
 
-{get_tools_prompt()}
-"""
+    # 🧠 Heuristic fallback
+    if "read" in step_lower or "open" in step_lower:
+        return {
+            "tool": "read_file",
+            "args": {"path": "README.md"}
+        }
 
-    decision = llm_complete(SYSTEM_PROMPT, prompt)
-
-    if not decision or not isinstance(decision, str):
-        return None, None
-
-    if decision.startswith("TOOL:NONE"):
-        return None, None
-
-    try:
-        lines = decision.splitlines()
-        tool = lines[0].split(":", 1)[1].strip()
-        arg = lines[1].split(":", 1)[1].strip()
-
-        # Sanitize arg if it's a URL
-        url_match = URL_REGEX.search(arg)
-        if url_match:
-            arg = url_match.group(1).strip()
-
-        if tool not in TOOLS:
-            return None, None
-
-        return tool, arg
-
-    except Exception:
-        return None, None
+    # ❌ Default: no unsafe shell
+    return {
+        "tool": None,
+        "args": {}
+    }

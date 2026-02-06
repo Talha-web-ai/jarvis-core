@@ -1,17 +1,17 @@
 # core/reviewer.py
-from core.llm import llm_complete
-from rich.console import Console
 
-console = Console()
+def review(text: str) -> str:
+    """
+    Simple heuristic reviewer.
+    Only accepts meaningful textual outputs.
+    """
 
-SYSTEM_PROMPT = """
-You are a strict reviewer AI.
-Approve results only if they are useful, correct, and clear.
-Respond with APPROVE or REJECT and a short reason.
-"""
+    if not isinstance(text, str):
+        return "REJECT"
 
-class ReviewerAgent:
-    def review(self, result: str) -> bool:
-        feedback = llm_complete(SYSTEM_PROMPT, result)
-        console.print(f"[bold magenta]→ Reviewer:[/bold magenta] {feedback}")
-        return feedback.upper().startswith("APPROVE")
+    cleaned = text.strip()
+
+    if len(cleaned) < 50:
+        return "REJECT"
+
+    return "APPROVE"
